@@ -11,4 +11,4 @@ This project is designed for text tranfer though UDP protocol.This project takes
   - Native Encryption Support(AES)
   - Fast Cnnection and byte tranfer
   - Receiver anonymity
-  - Fully customisable and open source
+  - Fully customizable and open source
