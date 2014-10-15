@@ -39,24 +39,48 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     }
     
     public ByteReceiver(int port){
-        
+        try {
+            this.port = port;
+            this.address = InetAddress.getByName("234.235.236.237");
+            socket = new MulticastSocket(this.port);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public ByteReceiver(InetAddress address, int port){
-        
+        try {
+            this.address = address;
+            this.port = port;
+            socket = new MulticastSocket(this.port);
+        } catch (IOException ex) {
+            Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void startReceiver(){
-        this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
-        this.running = true;
-        this.thread.start();
+        try {
+            this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
+            socket.joinGroup(address);
+            this.running = true;
+            this.thread.start();
+        } catch (IOException ex) {
+            Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void startReceiver(InetAddress address){
-        this.address = address;
-        this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
-        this.running = true;
-        this.thread.start();
+        try {
+            this.address = address;
+            this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
+            socket.joinGroup(address);
+            this.running = true;
+            this.thread.start();
+        } catch (IOException ex) {
+            Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void setPort(int port){
