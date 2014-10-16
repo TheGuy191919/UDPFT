@@ -6,12 +6,6 @@
 package io.github.theguy191919.udpft.protocol;
 
 import io.github.theguy191919.udpft.net.AbstractProtocolSender;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-import javax.swing.JLabel;
-//import seachat.net.Sender;
 
 /**
  * Message Protocol contains message.
