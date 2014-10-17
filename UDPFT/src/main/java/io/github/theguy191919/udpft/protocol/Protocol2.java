@@ -11,7 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * This protocol is for ping, sent out to room every 30 second. 
+ * If not received for 2 minuet, user is considered gone.
  * @author evan__000
  */
 public class Protocol2 extends Protocol{

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 /**
  * This protocol contains the handshake info.
+ * IP address
  * @author Yiwen Dong
  */
 public class Protocol1 extends Protocol{
