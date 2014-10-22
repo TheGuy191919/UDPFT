@@ -49,7 +49,7 @@ public class Protocol2 extends Protocol{
         Protocol.addDataR(byteArray, 4, (this.ProtocolNumber + "").getBytes());
         Protocol.addDataR(byteArray, 19, (this.message.length() + "").getBytes());
         Protocol.addDataL(byteArray, 20, this.Sender.getBytes());
-        Protocol.addDataL(byteArray, 25, this.Recipient.getBytes());
+        Protocol.addDataL(byteArray, 30, this.Recipient.getBytes());
         Protocol.addDataL(byteArray, 50, this.message.getBytes());
         return byteArray;
     }

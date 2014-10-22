@@ -33,8 +33,9 @@ public abstract class Protocol {
     //char0-1 is version
     //char2-4 is protocol number
     //char5-19 is length info
-    //char20-24 is username
-    //char25-29 is recipient - not used by all
+    //char20-29 is username
+    //char30-39 is recipient - not used by all
+    //chat40-49 is time stamp (Year Month Date Hour Minet Second MicroSecond)
     //char50-499 is message
     //char length is 500, no less no more
     public Protocol(){
@@ -120,11 +121,11 @@ public abstract class Protocol {
     }
     
     private static String parseForSender(byte[] message){
-        return new String(Arrays.copyOfRange(message, 20, 25));
+        return new String(Arrays.copyOfRange(message, 20, 30));
     }
     
     private static String parseForRecipient(byte[] message){
-        return new String(Arrays.copyOfRange(message, 25, 30));
+        return new String(Arrays.copyOfRange(message, 30, 40));
     }
     
     @Deprecated

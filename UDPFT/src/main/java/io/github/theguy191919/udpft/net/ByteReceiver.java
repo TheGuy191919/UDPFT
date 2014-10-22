@@ -62,7 +62,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     
     public void startReceiver(){
         try {
-            this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
+            this.thread = new Thread(this, "Reveiver at " + this.address.getHostAddress() + " at port " + port);
             socket.joinGroup(address);
             this.running = true;
             this.thread.start();
@@ -74,7 +74,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     public void startReceiver(InetAddress address){
         try {
             this.address = address;
-            this.thread = new Thread(this, "Reveiver at" + this.address.getHostAddress() + " at port " + port);
+            this.thread = new Thread(this, "Reveiver at " + this.address.getHostAddress() + " at port " + port);
             socket.joinGroup(address);
             this.running = true;
             this.thread.start();
