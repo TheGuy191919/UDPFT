@@ -6,6 +6,7 @@
 
 package io.github.theguy191919.udpft.net;
 
+import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,13 +23,16 @@ import java.util.logging.Logger;
  */
 public class ByteSender implements AbstractProtocolSender{
     
+    private int numberOfSockets = -1;
     private InetAddress address;
     private int port = 58394;
     private MulticastSocket socket;
+    private AbstractCrypto crypto;
     
     public ByteSender(){
         try {
             this.address = InetAddress.getByName("234.235.236.237");
+            InetAddress[] address = InetAddress.getAllByName("234.235.236.237");
             socket = new MulticastSocket(port);
         } catch (UnknownHostException | SocketException ex) {
             Logger.getLogger(ByteSender.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,9 +107,16 @@ public class ByteSender implements AbstractProtocolSender{
         return this.address;
     }
     
+    public void setCrypto(AbstractCrypto crypto){
+        this.crypto = crypto;
+    }
+    
     @Override
     public void send(byte[] bytearray) {
         try {
+            if(this.crypto != null){
+                bytearray = crypto.encrypt(bytearray);
+            }
             this.socket.send(new DatagramPacket(bytearray, bytearray.length, this.address, this.port));
         } catch (IOException ex) {
             Logger.getLogger(ByteSender.class.getName()).log(Level.SEVERE, null, ex);

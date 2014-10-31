@@ -14,9 +14,9 @@ import io.github.theguy191919.udpft.net.AbstractProtocolSender;
  */
 public class Protocol0 extends Protocol {
     
-    static{
-        Protocol.regesterProtocol(0, Protocol0.class);
-    }
+//    static{
+//        Protocol.regesterProtocol(0, Protocol0.class);
+//    }
     
     private String message = "";
 

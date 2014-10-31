@@ -22,6 +22,9 @@ public abstract class Protocol {
     private static final Map<Integer, Class<? extends Protocol>> mapOfProtocol;
     static{
         mapOfProtocol = new HashMap<>();
+        regesterProtocol(0, Protocol0.class);
+        regesterProtocol(1, Protocol1.class);
+        regesterProtocol(2, Protocol2.class);
     }
     
     private static ProtocolEventHandler eventHandler = new ProtocolEventHandler();
@@ -121,11 +124,11 @@ public abstract class Protocol {
     }
     
     private static String parseForSender(byte[] message){
-        return new String(Arrays.copyOfRange(message, 20, 30));
+        return new String(Arrays.copyOfRange(message, 20, 30)).trim();
     }
     
     private static String parseForRecipient(byte[] message){
-        return new String(Arrays.copyOfRange(message, 30, 40));
+        return new String(Arrays.copyOfRange(message, 30, 40)).trim();
     }
     
     @Deprecated
@@ -140,7 +143,7 @@ public abstract class Protocol {
         if(Length == 0){
             return "";
         }
-        return new String(Arrays.copyOfRange(message, 50, 50 + Length));
+        return new String(Arrays.copyOfRange(message, 50, 50 + Length)).trim();
     }
     
     @Deprecated
@@ -186,8 +189,8 @@ public abstract class Protocol {
     }
     
     public void setSender(String sender){
-        if(sender.length() > 5){
-            return;
+        if(sender.length() > 10){
+            sender = sender.substring(0, 10);
         }
         this.Sender = sender;
     }

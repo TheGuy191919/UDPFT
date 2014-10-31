@@ -19,9 +19,9 @@ import java.util.logging.Logger;
  */
 public class Protocol1 extends Protocol{
     
-    static{
-        Protocol.regesterProtocol(1, Protocol1.class);
-    }
+//    static{
+//        Protocol.regesterProtocol(1, Protocol1.class);
+//    }
     
     private String message = System.getProperty("user.name");
     

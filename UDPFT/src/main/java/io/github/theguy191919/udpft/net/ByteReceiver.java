@@ -6,6 +6,7 @@
 
 package io.github.theguy191919.udpft.net;
 
+import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 import io.github.theguy191919.udpft.protocol.Protocol;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -26,6 +27,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     private InetAddress address;
     private int port = 58394;
     private MulticastSocket socket;
+    private AbstractCrypto crypto;
     
     public ByteReceiver(){
         try {
@@ -99,12 +101,19 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
         return this.address;
     }
     
+    public void setCrypto(AbstractCrypto crypto){
+        this.crypto = crypto;
+    }
+    
     @Override
     public void run() {
         while(this.running){
             try {
                 byte[] buffer = new byte[500];
                 socket.receive(new DatagramPacket(buffer, buffer.length, this.address, this.port));
+                if(this.crypto != null){
+                    buffer = crypto.decrypt(buffer);
+                }
                 Protocol.getProtocol(buffer);
             } catch (IOException | IllegalAccessException | InstantiationException ex) {
                 Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
