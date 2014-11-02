@@ -6,10 +6,14 @@
 
 package io.github.theguy191919.udpft.net;
 
+import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
+
 /**
  *
  * @author Yiwen Dong
  */
 public interface AbstractProtocolSender {
     void send(byte[] bytearray);
+    //void addListener(ProtocolEventListener listener);
+    //void addListener(ProtocolEventListener listener, int listenFor);
 }

@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author evan__000
  */
+@Deprecated
 public class ProtocolEventHandler {
     
     Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();

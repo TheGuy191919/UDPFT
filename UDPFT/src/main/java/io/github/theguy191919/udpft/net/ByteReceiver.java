@@ -8,11 +8,17 @@ package io.github.theguy191919.udpft.net;
 
 import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 import io.github.theguy191919.udpft.protocol.Protocol;
+import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +27,8 @@ import java.util.logging.Logger;
  * @author Yiwen Dong
  */
 public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
+    
+    Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
     
     private Thread thread;
     private boolean running = false;
@@ -114,7 +122,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
                 if(this.crypto != null){
                     buffer = crypto.decrypt(buffer);
                 }
-                Protocol.getProtocol(buffer);
+                this.messageGotten(Protocol.getProtocol(buffer));
             } catch (IOException | IllegalAccessException | InstantiationException ex) {
                 Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -126,5 +134,39 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
         socket.close();
         thread = null;
     }
+
+    @Override
+    public void addListener(ProtocolEventListener listener) {
+        this.mapOfListener.put(listener, -1);
+    }
+
+    @Override
+    public void addListener(ProtocolEventListener listener, int listenFor) {
+        this.mapOfListener.put(listener, listenFor);
+    }
     
+    @Override
+    public void removeListener(ProtocolEventListener listener) {
+        this.mapOfListener.remove(listener);
+    }
+    
+    private void messageGotten(Protocol protocol){
+        List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());
+        arrayOfListener.addAll(this.getForValue(-1));
+        for(ProtocolEventListener listener : arrayOfListener){
+            listener.gotEvent(protocol);
+        }
+    }
+    
+    private List<ProtocolEventListener> getForValue(int value){
+        List<ProtocolEventListener> arrayOfMatch = new LinkedList<>();
+        Iterator it = this.mapOfListener.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry pairs = (Map.Entry)it.next();
+            if(((Integer)pairs.getValue()).equals(value)){
+                arrayOfMatch.add((ProtocolEventListener)pairs.getKey());
+            }
+        }
+        return arrayOfMatch;
+    }
 }

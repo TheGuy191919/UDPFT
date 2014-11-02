@@ -7,6 +7,7 @@
 package io.github.theguy191919.udpft.net;
 
 import io.github.theguy191919.udpft.encryption.AbstractCrypto;
+import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -122,5 +123,15 @@ public class ByteSender implements AbstractProtocolSender{
             Logger.getLogger(ByteSender.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+//    @Override
+//    public void addListener(ProtocolEventListener listener) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    public void addListener(ProtocolEventListener listener, int listenFor) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     
 }
