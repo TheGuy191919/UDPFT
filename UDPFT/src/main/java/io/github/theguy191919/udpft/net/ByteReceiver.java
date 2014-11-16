@@ -123,7 +123,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
                     buffer = crypto.decrypt(buffer);
                 }
                 this.messageGotten(Protocol.getProtocol(buffer));
-            } catch (IOException | IllegalAccessException | InstantiationException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(ByteReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -131,6 +131,7 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     
     public void stopReveiver(){
         this.running = false;
+        this.thread.interrupt();
         socket.close();
         thread = null;
     }
