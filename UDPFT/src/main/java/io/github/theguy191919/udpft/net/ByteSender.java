@@ -22,6 +22,7 @@ import java.util.logging.Logger;
  *
  * @author Yiwen Dong
  */
+@Deprecated
 public class ByteSender implements AbstractProtocolSender{
     
     private int numberOfSockets = -1;

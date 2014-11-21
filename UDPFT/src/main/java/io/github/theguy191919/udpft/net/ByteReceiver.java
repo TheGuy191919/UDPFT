@@ -26,6 +26,7 @@ import java.util.logging.Logger;
  *
  * @author Yiwen Dong
  */
+@Deprecated
 public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
     
     Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
