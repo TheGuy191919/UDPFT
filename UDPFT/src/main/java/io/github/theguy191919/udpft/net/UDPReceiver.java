@@ -5,7 +5,16 @@
  */
 package io.github.theguy191919.udpft.net;
 
+import io.github.theguy191919.udpft.encryption.AbstractCrypto;
+import io.github.theguy191919.udpft.protocol.Protocol;
 import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -13,24 +22,71 @@ import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
  */
 public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
 
+    Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
+    
+    private Thread thread;
+    private boolean running = false;
+    private InetAddress address;
+    private int port = 58394;
+    private MulticastSocket socket;
+    private AbstractCrypto crypto;
+    
     @Override
     public void addListener(ProtocolEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.mapOfListener.put(listener, -1);
     }
 
     @Override
     public void addListener(ProtocolEventListener listener, int listenFor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.mapOfListener.put(listener, listenFor);
     }
 
     @Override
     public void removeListener(ProtocolEventListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.mapOfListener.remove(listener);
+    }
+    
+    public void start(){
+        
     }
 
     @Override
     public void run() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void stop(){
+        
+    }
+
+    @Override
+    public void setCrypto(AbstractCrypto crypto) {
+        this.crypto = crypto;
+    }
+
+    @Override
+    public AbstractCrypto getCrypto() {
+        return this.crypto;
+    }
+    
+    private void messageGotten(Protocol protocol){
+        List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());
+        arrayOfListener.addAll(this.getForValue(-1));
+        for(ProtocolEventListener listener : arrayOfListener){
+            listener.gotEvent(protocol);
+        }
+    }
+    
+    private List<ProtocolEventListener> getForValue(int value){
+        List<ProtocolEventListener> arrayOfMatch = new LinkedList<>();
+        Iterator it = this.mapOfListener.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry pairs = (Map.Entry)it.next();
+            if(((Integer)pairs.getValue()).equals(value)){
+                arrayOfMatch.add((ProtocolEventListener)pairs.getKey());
+            }
+        }
+        return arrayOfMatch;
     }
     
 }

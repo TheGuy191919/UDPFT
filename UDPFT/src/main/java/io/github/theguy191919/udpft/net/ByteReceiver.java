@@ -110,8 +110,14 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
         return this.address;
     }
     
+    @Override
     public void setCrypto(AbstractCrypto crypto){
         this.crypto = crypto;
+    }
+    
+    @Override
+    public AbstractCrypto getCrypto(){
+        return this.crypto;
     }
     
     @Override

@@ -6,7 +6,7 @@
 
 package io.github.theguy191919.udpft.net;
 
-import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
+import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 
 /**
  *
@@ -14,6 +14,8 @@ import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
  */
 public interface AbstractProtocolSender {
     void send(byte[] bytearray);
+    void setCrypto(AbstractCrypto crypto);
+    AbstractCrypto getCrypto();
     //void addListener(ProtocolEventListener listener);
     //void addListener(ProtocolEventListener listener, int listenFor);
 }

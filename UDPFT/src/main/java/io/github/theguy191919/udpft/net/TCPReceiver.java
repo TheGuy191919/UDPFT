@@ -9,6 +9,6 @@ package io.github.theguy191919.udpft.net;
  *
  * @author evan__000
  */
-public class TCPReceiver {
+public class TCPReceiver implements AbstractProtocolReceiver, Runnable{
     
 }

@@ -9,6 +9,6 @@ package io.github.theguy191919.udpft.net;
  *
  * @author evan__000
  */
-public class TCPSender {
+public class TCPSender implements AbstractProtocolSender, Runnable{
     
 }

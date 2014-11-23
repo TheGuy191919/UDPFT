@@ -5,6 +5,8 @@
  */
 package io.github.theguy191919.udpft.net;
 
+import io.github.theguy191919.udpft.encryption.AbstractCrypto;
+
 /**
  *
  * @author evan__000
@@ -18,6 +20,16 @@ public class UDPSender implements AbstractProtocolSender, Runnable{
 
     @Override
     public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setCrypto(AbstractCrypto crypto) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AbstractCrypto getCrypto() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

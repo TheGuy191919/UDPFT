@@ -134,5 +134,10 @@ public class ByteSender implements AbstractProtocolSender{
 //    public void addListener(ProtocolEventListener listener, int listenFor) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
+
+    @Override
+    public AbstractCrypto getCrypto() {
+        return this.crypto;
+    }
     
 }
