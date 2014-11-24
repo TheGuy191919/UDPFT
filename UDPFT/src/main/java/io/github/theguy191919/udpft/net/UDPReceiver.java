@@ -52,7 +52,10 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
 
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //listen for an arry of things, delete repeted messages, bases on hash, rence and repeat
+        while(running){
+            this.socket.receive();
+        }
     }
     
     public void stop(){
