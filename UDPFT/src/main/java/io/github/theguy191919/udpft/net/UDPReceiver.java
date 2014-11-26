@@ -24,9 +24,9 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
 
     Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
     
-    private Thread thread;
+    private List<Thread> thread = new LinkedList<>();
     private boolean running = false;
-    private InetAddress address;
+    private List<InetAddress> address = new LinkedList<>();
     private int port = 58394;
     private MulticastSocket socket;
     private AbstractCrypto crypto;
@@ -47,14 +47,17 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
     }
     
     public void start(){
-        
+        for(Thread thread : this.thread){
+                thread.start();
+            }
     }
 
     @Override
     public void run() {
         //listen for an arry of things, delete repeted messages, bases on hash, rence and repeat
         while(running){
-            this.socket.receive();
+            
+            
         }
     }
     
