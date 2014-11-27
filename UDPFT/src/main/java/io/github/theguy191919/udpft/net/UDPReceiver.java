@@ -47,8 +47,8 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
     }
     
     public void start(){
-        for(Thread thread : this.thread){
-                thread.start();
+        for(int a = 0; a < this.address.size(); a++){
+                this
             }
     }
 
