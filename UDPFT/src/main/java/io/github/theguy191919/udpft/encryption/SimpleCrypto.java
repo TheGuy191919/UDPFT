@@ -9,12 +9,19 @@ import java.security.Key;
 import java.util.Random;
 
 /**
- *
+ * Need to be thread safe
  * @author evan__000
  */
 public class SimpleCrypto implements AbstractCrypto{
     
     long key = -1L;
+    public SimpleCrypto(){
+        
+    }
+    
+    public SimpleCrypto(long key){
+        this.key = key;
+    }
 
     @Override
     public void setPublicKey(long key) {
@@ -37,7 +44,7 @@ public class SimpleCrypto implements AbstractCrypto{
     }
 
     @Override
-    public String encrypt(String input) {
+    public synchronized String encrypt(String input) {
         Random generator = new Random(key);
         byte[] data = input.getBytes();
         int pos = 0;
@@ -49,7 +56,7 @@ public class SimpleCrypto implements AbstractCrypto{
     }
 
     @Override
-    public String decrypt(String input) {
+    public synchronized String decrypt(String input) {
         Random generator = new Random(key);
         byte[] data = input.getBytes();
         int pos = 0;
@@ -61,7 +68,7 @@ public class SimpleCrypto implements AbstractCrypto{
     }
 
     @Override
-    public byte[] encrypt(byte[] input) {
+    public synchronized byte[] encrypt(byte[] input) {
         Random generator = new Random(key);
         byte[] data = input;
         int pos = 0;
@@ -73,7 +80,7 @@ public class SimpleCrypto implements AbstractCrypto{
     }
 
     @Override
-    public byte[] decrypt(byte[] input) {
+    public synchronized byte[] decrypt(byte[] input) {
         Random generator = new Random(key);
         byte[] data = input;
         int pos = 0;

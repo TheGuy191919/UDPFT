@@ -25,7 +25,6 @@ public class UDPReceiver implements AbstractProtocolReceiver{
     Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
     
     private List<Thread> thread = new LinkedList<>();
-    private boolean running = false;
     private List<InetAddress> address = new LinkedList<>();
     private int port = 58394;
     private MulticastSocket socket;
@@ -50,15 +49,6 @@ public class UDPReceiver implements AbstractProtocolReceiver{
         for(int a = 0; a < this.address.size(); a++){
                 this
             }
-    }
-
-    @Override
-    public void run() {
-        //listen for an arry of things, delete repeted messages, bases on hash, rence and repeat
-        while(running){
-            
-            
-        }
     }
     
     public void stop(){
