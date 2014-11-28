@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author evan__000
  */
-public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
+public class UDPReceiver implements AbstractProtocolReceiver{
 
     Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
     
@@ -75,7 +75,7 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
         return this.crypto;
     }
     
-    private void messageGotten(Protocol protocol){
+    protected void messageGotten(Protocol protocol){
         List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());
         arrayOfListener.addAll(this.getForValue(-1));
         for(ProtocolEventListener listener : arrayOfListener){
@@ -95,4 +95,36 @@ public class UDPReceiver implements AbstractProtocolReceiver, Runnable{
         return arrayOfMatch;
     }
     
+}
+
+class Receiver implements Runnable{
+    
+    private UDPReceiver parent;
+    private InetAddress address;
+    private Thread thread;
+    private int port = 58394;
+    private MulticastSocket socket;
+    private AbstractCrypto crypto;
+    
+    public Receiver(InetAddress address, UDPReceiver rec, int number, int port, MulticastSocket socket, ){
+        this.address = address;
+        this.parent = rec;
+    }
+    
+    public void start(){
+        this.thread = new Thread(this, "Receiver at " + address.getHostAddress() );
+    }
+
+    @Override
+    public void run() {
+        //listen for an arry of things, delete repeted messages, bases on hash, rence and repeat
+        while(running){
+            
+            
+        }
+    }
+    
+    public void stop(){
+        
+    }
 }
