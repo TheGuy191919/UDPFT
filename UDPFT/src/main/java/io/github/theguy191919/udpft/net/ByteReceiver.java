@@ -177,4 +177,14 @@ public class ByteReceiver implements AbstractProtocolReceiver, Runnable{
         }
         return arrayOfMatch;
     }
+
+    @Override
+    public void start() {
+        this.startReceiver();
+    }
+
+    @Override
+    public void stop() {
+        this.stopReveiver();
+    }
 }
