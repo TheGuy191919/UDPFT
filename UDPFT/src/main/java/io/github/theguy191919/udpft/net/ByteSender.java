@@ -7,6 +7,7 @@
 package io.github.theguy191919.udpft.net;
 
 import io.github.theguy191919.udpft.encryption.AbstractCrypto;
+import io.github.theguy191919.udpft.protocol.Protocol;
 import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -138,6 +139,11 @@ public class ByteSender implements AbstractProtocolSender{
     @Override
     public AbstractCrypto getCrypto() {
         return this.crypto;
+    }
+
+    @Override
+    public void send(Protocol protocol) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

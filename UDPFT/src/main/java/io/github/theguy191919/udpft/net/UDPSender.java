@@ -6,9 +6,12 @@
 package io.github.theguy191919.udpft.net;
 
 import io.github.theguy191919.udpft.encryption.AbstractCrypto;
+import io.github.theguy191919.udpft.protocol.Protocol;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.AbstractQueue;
 import java.util.List;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  *
@@ -21,15 +24,9 @@ public class UDPSender implements AbstractProtocolSender, Runnable{
     private int port = 58394;
     private MulticastSocket socket;
     private AbstractCrypto crypto;
-    private List<byte[]> que = new 
-
-    @Override
-    @Override
-    public void send(byte[] bytearray) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    private AbstractQueue<byte[]> que = new PriorityBlockingQueue();
     
-    public void start(){
+    public void start() {
         
     }
 
@@ -50,6 +47,16 @@ public class UDPSender implements AbstractProtocolSender, Runnable{
     @Override
     public AbstractCrypto getCrypto() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void send(byte[] bytearray) {
+        this.que.add(bytearray);
+    }
+
+    @Override
+    public void send(Protocol protocol) {
+        this.que.add(protocol.returnByteArray());
     }
     
 }

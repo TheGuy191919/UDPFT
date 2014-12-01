@@ -115,7 +115,7 @@ public class UDPReceiver implements AbstractProtocolReceiver {
         return this.crypto;
     }
 
-    protected void messageGotten(byte[] array) {
+    protected synchronized void messageGotten(byte[] array) {
         try {
             Protocol protocol = Protocol.getProtocol(this.crypto.decrypt(array));
             List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());
@@ -181,7 +181,6 @@ class Receiver implements Runnable {
     public void run() {
         //listen for an arry of things, delete repeted messages, bases on hash, rence and repeat
         while (running) {
-
             try {
                 byte[] buffer = new byte[500];
                 socket.receive(new DatagramPacket(buffer, buffer.length, this.address, this.port));
