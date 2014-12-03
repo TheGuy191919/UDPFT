@@ -17,6 +17,8 @@ public interface AbstractProtocolSender {
     @Deprecated
     void send(byte[] bytearray);
     void send(Protocol protocol);
+    void start();
+    void stop();
     void setCrypto(AbstractCrypto crypto);
     AbstractCrypto getCrypto();
     //void addListener(ProtocolEventListener listener);
