@@ -16,6 +16,7 @@ import java.util.AbstractQueue;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,7 +100,7 @@ public class UDPSender implements AbstractProtocolSender {
 
 class Sender implements Runnable {
 
-    private AbstractQueue<byte[]> que = new PriorityBlockingQueue();
+    private AbstractQueue<byte[]> que = new LinkedBlockingDeque();
     private Thread thread;
     private boolean running;
     private InetAddress address;
@@ -135,22 +136,24 @@ class Sender implements Runnable {
 
     @Override
     public void run() {
-        int sleepFor = 1000;
+        int sleepFor = 100;
         while (this.running) {
-            sleepFor += 50;
-                while (!this.que.isEmpty()) {
-                    sleepFor -= 100;
-                    byte[] bytearray = this.que.poll();
-                    bytearray = sender.encrypt(bytearray);
-                    try {
-                        this.socket.send(new DatagramPacket(bytearray, bytearray.length, this.address, this.port));
-                    } catch (IOException ex) {
-                        Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            sleepFor += 10;
+            while (!this.que.isEmpty()) {
+                sleepFor -= 50;
+                byte[] bytearray = this.que.poll();
+                bytearray = sender.encrypt(bytearray);
+                try {
+                    this.socket.send(new DatagramPacket(bytearray, bytearray.length, this.address, this.port));
+                } catch (IOException ex) {
+                    Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if(sleepFor < 0){
-                    sleepFor = 0;
-                }
+            }
+            if (sleepFor < 0) {
+                sleepFor = 0;
+            } else if (sleepFor > 500) {
+                sleepFor = 1000;
+            }
             try {
                 Thread.sleep(sleepFor);
             } catch (InterruptedException ex) {
