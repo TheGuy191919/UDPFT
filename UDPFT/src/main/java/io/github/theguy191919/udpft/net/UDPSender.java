@@ -31,7 +31,7 @@ public class UDPSender implements AbstractProtocolSender {
     private MulticastSocket socket;
     private AbstractCrypto crypto;
     private List<Sender> listOfSender = new LinkedList<>();
-    
+
     public UDPSender() {
         try {
             this.address = new LinkedList<>(Arrays.asList(InetAddress.getAllByName("234.235.236.237")));
@@ -60,7 +60,7 @@ public class UDPSender implements AbstractProtocolSender {
 
     @Override
     public void stop() {
-        for(int a = 0; a < this.listOfSender.size(); a++){
+        for (int a = 0; a < this.listOfSender.size(); a++) {
             this.listOfSender.get(a).stop();
             this.listOfSender.remove(a);
         }
@@ -74,6 +74,10 @@ public class UDPSender implements AbstractProtocolSender {
         }
     }
 
+    public synchronized byte[] encrypt(byte[] input) {
+        return this.crypto.encrypt(input);
+    }
+
     @Override
     public AbstractCrypto getCrypto() {
         return this.crypto;
@@ -81,11 +85,8 @@ public class UDPSender implements AbstractProtocolSender {
 
     @Override
     public void send(byte[] bytearray) {
-        synchronized (this) {
-            for (Sender sender : this.listOfSender) {
-                sender.send(bytearray);
-            }
-            this.notifyAll();
+        for (Sender sender : this.listOfSender) {
+            sender.send(bytearray);
         }
     }
 
@@ -134,20 +135,24 @@ class Sender implements Runnable {
 
     @Override
     public void run() {
+        int sleepFor = 1000;
         while (this.running) {
-            try {
-                synchronized (sender) {
-                    while (!this.que.isEmpty()) {
-                        byte[] bytearray = this.que.poll();
-                        bytearray = this.crypto.decrypt(bytearray);
-                        try {
-                            this.socket.send(new DatagramPacket(bytearray, bytearray.length, this.address, this.port));
-                        } catch (IOException ex) {
-                            Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+            sleepFor += 50;
+                while (!this.que.isEmpty()) {
+                    sleepFor -= 100;
+                    byte[] bytearray = this.que.poll();
+                    bytearray = sender.encrypt(bytearray);
+                    try {
+                        this.socket.send(new DatagramPacket(bytearray, bytearray.length, this.address, this.port));
+                    } catch (IOException ex) {
+                        Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    this.wait();
                 }
+                if(sleepFor < 0){
+                    sleepFor = 0;
+                }
+            try {
+                Thread.sleep(sleepFor);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -160,8 +165,8 @@ class Sender implements Runnable {
         socket.close();
         thread = null;
     }
-    
-    public void setCrypto(AbstractCrypto crypto){
+
+    public void setCrypto(AbstractCrypto crypto) {
         this.crypto = crypto;
     }
 
