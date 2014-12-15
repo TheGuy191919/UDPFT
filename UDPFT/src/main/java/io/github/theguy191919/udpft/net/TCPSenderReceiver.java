@@ -149,7 +149,7 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
         this.mapOfListener.remove(listener);
     }
     
-    protected synchronized void messageGotten(byte[] array) {
+    protected void messageGotten(byte[] array) {
         try {
             Protocol protocol = Protocol.getProtocol(this.crypto.decrypt(array));
             List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());

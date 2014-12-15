@@ -25,6 +25,8 @@ public abstract class Protocol {
         regesterProtocol(0, Protocol0.class);
         regesterProtocol(1, Protocol1.class);
         regesterProtocol(2, Protocol2.class);
+        regesterProtocol(3, Protocol3.class);
+        regesterProtocol(4, Protocol4.class);
     }
     
     private static ProtocolEventHandler eventHandler = new ProtocolEventHandler();
