@@ -8,6 +8,7 @@ package io.github.theguy191919.udpft.net;
 import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 import io.github.theguy191919.udpft.protocol.Protocol;
 import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
+import java.io.IOException;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,12 +19,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 /**
  *
@@ -81,14 +85,25 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
             sleepFor += 10;
             while (!this.que.isEmpty()) {
                 sleepFor -= 50;
-                byte[] bytearray = this.que.poll().getMessage();
-                String url = this.que.poll().getUrl();
+                SentContent thing = this.que.poll();
+                if(thing == null){
+                    break;
+                }
+                byte[] bytearray = thing.getMessage();
+                String url = thing.getUrl();
                 this.crypto.encrypt(bytearray);
                 
                 HttpPost post = new HttpPost(url);
-                List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-                nvps.add(new BasicNameValuePair("data", ));
-                post.setEntity(new InputStreamEntity(new ByteInputStream()));
+                //List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+                //nvps.add(new BasicNameValuePair("data", ));
+                post.setEntity(new ByteArrayEntity(bytearray));
+                try {
+                    HttpResponse response = client.execute(post);
+                    byte[] reply = EntityUtils.toByteArray(response.getEntity());
+                    this.messageGotten(reply);
+                } catch (IOException ex) {
+                    Logger.getLogger(TCPSenderReceiver.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             if (sleepFor < 0) {
                 sleepFor = 0;
