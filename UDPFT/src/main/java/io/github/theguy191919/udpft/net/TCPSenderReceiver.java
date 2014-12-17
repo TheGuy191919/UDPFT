@@ -93,6 +93,8 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
                 String url = thing.getUrl();
                 this.crypto.encrypt(bytearray);
                 
+                //this.printArray("Sending message", bytearray, "End of message");
+                
                 HttpPost post = new HttpPost(url);
                 //List<NameValuePair> nvps = new ArrayList<NameValuePair>();
                 //nvps.add(new BasicNameValuePair("data", ));
@@ -121,7 +123,9 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
 
     @Override
     public void stop() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.running = false;
+        this.thread.interrupt();
+        this.thread = null;
     }
 
     @Override
@@ -150,6 +154,7 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
     }
     
     protected void messageGotten(byte[] array) {
+        //this.printArray("Recieved message", this.crypto.decrypt(array), "End of print");
         try {
             Protocol protocol = Protocol.getProtocol(this.crypto.decrypt(array));
             List<ProtocolEventListener> arrayOfListener = this.getForValue(protocol.getProtocolNumber());
@@ -172,6 +177,14 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
             }
         }
         return arrayOfMatch;
+    }
+    
+    private void printArray(String ini, byte[] array, String end){
+        System.out.println(ini);
+        for(int a = 0; a < array.length; a++){
+            System.out.println(a + ": " + array[a]);
+        }
+        System.out.println(end);
     }
 }
 
