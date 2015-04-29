@@ -9,6 +9,7 @@ import io.github.theguy191919.udpft.encryption.AbstractCrypto;
 import io.github.theguy191919.udpft.protocol.Protocol;
 import io.github.theguy191919.udpft.protocol.ProtocolEventListener;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,41 +22,80 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 /**
  *
  * @author evan__000
  */
-public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtocolReceiver, Runnable{
-
+public class HttpSenderReceiver implements AbstractProtocolReceiver, AbstractProtocolSender, Runnable{
+    
     private Map<ProtocolEventListener, Integer> mapOfListener = new ConcurrentHashMap();
     private AbstractQueue<SentContent> que = new LinkedBlockingDeque();
     private AbstractCrypto crypto;
+    private String defaultURL;
     private Thread thread;
     private boolean running = false;
-    private String defaultURL;
     CloseableHttpClient client = HttpClients.createSystem();
-    
-    public TCPSenderReceiver(AbstractCrypto crypto){
+
+    public HttpSenderReceiver(AbstractCrypto crypto){
         this.crypto = crypto;
         this.defaultURL = "localhost";
     }
     
-    public TCPSenderReceiver(AbstractCrypto crypto, String defaultURL){
-        this.defaultURL = defaultURL;
+    public HttpSenderReceiver(AbstractCrypto crypto, String defaultURL){
         this.crypto = crypto;
+        this.defaultURL = defaultURL;
     }
     
     @Override
+    public void addListener(ProtocolEventListener listener) {
+        this.mapOfListener.put(listener, -1);
+    }
+
+    @Override
+    public void addListener(ProtocolEventListener listener, int listenFor) {
+        this.mapOfListener.put(listener, listenFor);
+    }
+
+    @Override
+    public void start() {
+        this.running = true;
+        this.thread = new Thread(this, "HTTP Sender Receiver to url:\"" + this.defaultURL + "\"");
+        thread.start();
+    }
+
+    @Override
+    public void stop() {
+        this.running = false;
+        this.thread.interrupt();
+        this.thread = null;
+    }
+
+    @Override
+    public void removeListener(ProtocolEventListener listener) {
+        this.mapOfListener.remove(listener);
+    }
+
+    @Override
+    public void setCrypto(AbstractCrypto crypto) {
+        this.crypto = crypto;
+    }
+
+    @Override
+    public AbstractCrypto getCrypto() {
+        return this.crypto;
+    }
+
+    @Override
     public void send(byte[] bytearray) {
-        this.que.add(new SentContent(this.defaultURL, bytearray));
+        this.send(bytearray, defaultURL);
     }
     
     public void send(byte[] bytearray, String url){
@@ -72,20 +112,13 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
     }
 
     @Override
-    public void start() {
-        this.running = true;
-        this.thread = new Thread(this, "TCP Sender Receiver to url:\"" + this.defaultURL + "\"");
-        thread.start();
-    }
-    
-    @Override
     public void run() {
-                int sleepFor = 100;
+                    int sleepFor = 100;
         while (this.running) {
             sleepFor += 10;
             while (!this.que.isEmpty()) {
                 sleepFor -= 50;
-                SentContent thing = this.que.poll();
+                HttpSenderReceiver.SentContent thing = this.que.poll();
                 if(thing == null){
                     break;
                 }
@@ -96,9 +129,19 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
                 //this.printArray("Sending message", bytearray, "End of message");
                 
                 HttpPost post = new HttpPost(url);
-                //List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-                //nvps.add(new BasicNameValuePair("data", ));
-                post.setEntity(new ByteArrayEntity(bytearray));
+                
+                List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+                try {
+                    nvps.add(new BasicNameValuePair("data", new String(bytearray, "ISO-8859-1")));
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(HttpSenderReceiver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    post.setEntity(new UrlEncodedFormEntity(nvps));
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(HttpSenderReceiver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //post.setEntity(new ByteArrayEntity(bytearray));
                 try {
                     HttpResponse response = client.execute(post);
                     byte[] reply = EntityUtils.toByteArray(response.getEntity());
@@ -118,39 +161,6 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
                 Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-
-    @Override
-    public void stop() {
-        this.running = false;
-        this.thread.interrupt();
-        this.thread = null;
-    }
-
-    @Override
-    public void setCrypto(AbstractCrypto crypto) {
-        this.crypto = crypto;
-    }
-
-    @Override
-    public AbstractCrypto getCrypto() {
-        return this.crypto;
-    }
-
-    @Override
-    public void addListener(ProtocolEventListener listener) {
-        this.mapOfListener.put(listener, -1);
-    }
-
-    @Override
-    public void addListener(ProtocolEventListener listener, int listenFor) {
-        this.mapOfListener.put(listener, listenFor);
-    }
-    
-    @Override
-    public void removeListener(ProtocolEventListener listener) {
-        this.mapOfListener.remove(listener);
     }
     
     protected void messageGotten(byte[] array) {
@@ -225,3 +235,5 @@ public class TCPSenderReceiver implements AbstractProtocolSender, AbstractProtoc
     }
 }
 }
+
+
