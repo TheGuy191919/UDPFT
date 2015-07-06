@@ -5,6 +5,9 @@
  */
 package io.github.theguy191919.udpft.protocol2;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author root
@@ -23,6 +26,26 @@ public class Protocol {
     
     Protocol(String ownerName, String goal, String data){
         this(ownerName, ProtocolGoal.valueOf(goal), data);
+    }
+    
+    Protocol(String protocolString){
+        //used for udp
+        List<Integer> arrayOfLocation = new LinkedList<>();
+        protocolString = protocolString.trim();
+        List<String> arrayOfResults = new LinkedList<>();
+        arrayOfLocation.add(-1);
+        for(int a = 0; a < protocolString.length(); a++){
+            if(protocolString.charAt(a) == '|'){
+                arrayOfLocation.add(a);
+            }
+        }
+        arrayOfLocation.add(protocolString.length());
+        for(int a = 0; a < arrayOfLocation.size(); a++){
+            arrayOfResults.add(protocolString.substring(arrayOfLocation.get(a) + 1, arrayOfLocation.get(a + 1)));
+        }
+        this.ownerName = arrayOfResults.get(0);
+        this.goal = ProtocolGoal.valueOf(arrayOfResults.get(1));
+        this.data = arrayOfResults.get(2);
     }
 
     /**
@@ -46,4 +69,9 @@ public class Protocol {
         return data;
     }
     
+    
+    public String toString(){
+        //used for udp
+        return this.getOwnerName() + "|" + this.getGoal().toString() + "|" + this.getData();
+    }
 }
