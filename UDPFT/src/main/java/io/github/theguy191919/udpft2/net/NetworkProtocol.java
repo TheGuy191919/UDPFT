@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.theguy191919.udpft.net;
+package io.github.theguy191919.udpft2.net;
 
 /**
  *

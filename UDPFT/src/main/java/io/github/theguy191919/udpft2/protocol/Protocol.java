@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.theguy191919.udpft.protocol2;
+package io.github.theguy191919.udpft2.protocol;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,17 +18,17 @@ public class Protocol {
     private ProtocolGoal goal;
     private String data;
     
-    Protocol(String ownerName, ProtocolGoal goal, String data){
+    public Protocol(String ownerName, ProtocolGoal goal, String data){
         this.ownerName = ownerName;
         this.goal = goal;
         this.data = data;
     }
     
-    Protocol(String ownerName, String goal, String data){
+    public Protocol(String ownerName, String goal, String data){
         this(ownerName, ProtocolGoal.valueOf(goal), data);
     }
     
-    Protocol(String protocolString){
+    public Protocol(String protocolString){
         //used for udp
         List<Integer> arrayOfLocation = new LinkedList<>();
         protocolString = protocolString.trim();
