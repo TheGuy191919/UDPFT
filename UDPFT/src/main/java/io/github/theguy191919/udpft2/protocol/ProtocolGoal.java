@@ -18,7 +18,7 @@ public enum ProtocolGoal {
     POST("post");
     
     private final String name;
-    private EnumSet<ProtocolGoal> setOfGoals;
+    private static EnumSet<ProtocolGoal> setOfGoals;
     
     
     ProtocolGoal(String name){
@@ -30,7 +30,7 @@ public enum ProtocolGoal {
         return this.name;
     }
     
-    public ProtocolGoal getGoalFromString(String goal){
+    public static ProtocolGoal getGoalFromString(String goal){
         setOfGoals = EnumSet.allOf(ProtocolGoal.class);
         for(ProtocolGoal enumGoal : setOfGoals){
             if(goal.toString().equalsIgnoreCase(goal)){
